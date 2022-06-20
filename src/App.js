@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import TaskList from './components/TaskList.js';
 import './App.css';
+// import PropTypes from 'prop-types';
 
 const TASKS = [
   {
@@ -30,21 +31,41 @@ const App = () => {
     setTaskData(tasks);
   };
 
+  const deleteTask = (id) => {
+    const newTasks = taskData.filter((task) => {
+      return task.id !== id;
+    });
+
+    setTaskData(newTasks);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
-        <div>
-          <TaskList
-            tasks={taskData}
-            onUpdateTaskCompletion={updateTaskCompletion}
-          />
-        </div>
+        <TaskList
+          tasks={taskData}
+          onUpdateTaskCompletion={updateTaskCompletion}
+          onDelete={deleteTask}
+        />
       </main>
     </div>
   );
 };
+
+// App.propTypes = {
+//   tasks: PropTypes.arrayOf(
+//     PropTypes.shape({
+//       id: PropTypes.number.isRequired,
+//       title: PropTypes.string.isRequired,
+//       isComplete: PropTypes.bool.isRequired,
+//       tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
+//     })
+//   ).isRequired,
+//   onUpdateTaskCompletion: PropTypes.func.isRequired, // this part was inside the validation line for tasks; it just needed its own line!
+//   onDelete: PropTypes.func.isRequired,
+// };
 
 export default App;

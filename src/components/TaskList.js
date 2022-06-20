@@ -3,21 +3,22 @@ import PropTypes from 'prop-types';
 import Task from './Task';
 import './TaskList.css';
 
-const TaskList = ({ tasks, onUpdateTaskCompletion }) => {
-  const getTaskListJSX = (tasks) => {
-    return tasks.map((task) => {
-      return (
-        <Task
-          key={task.id}
-          id={task.id}
-          title={task.title}
-          isComplete={task.isComplete}
-          onUpdate={onUpdateTaskCompletion}
-        />
-      );
-    });
-  };
-  return <ul className="tasks__list no-bullet">{getTaskListJSX(tasks)}</ul>;
+const TaskList = (props) => {
+  // We had some bad syntax here
+  const getTaskListJSX = props.tasks.map((task) => {
+    return (
+      <Task
+        key={task.id}
+        id={task.id}
+        title={task.title}
+        isComplete={task.isComplete}
+        onUpdate={props.onUpdateTaskCompletion}
+        onDeleteFx={props.onDelete}
+      />
+    );
+  });
+
+  return <div>{getTaskListJSX}</div>;
 };
 
 TaskList.propTypes = {
@@ -26,10 +27,10 @@ TaskList.propTypes = {
       id: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
       isComplete: PropTypes.bool.isRequired,
-      tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
-      onClick: PropTypes.func.isRequired,
     })
   ).isRequired,
+  onUpdateTaskCompletion: PropTypes.func.isRequired, // this part was inside the validation line for tasks; it just needed its own line!
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default TaskList;
