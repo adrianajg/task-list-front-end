@@ -4,7 +4,6 @@ import './Task.css';
 
 const Task = (props) => {
   const buttonClass = props.isComplete ? 'tasks__item__toggle--completed' : '';
-  console.log({ buttonClass });
 
   const handleDelete = () => {
     props.onDeleteFx(props.id);
