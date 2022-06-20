@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import TaskList from './components/TaskList.js';
 import './App.css';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 const TASKS = [
   {
@@ -55,17 +55,17 @@ const App = () => {
   );
 };
 
-// App.propTypes = {
-//   tasks: PropTypes.arrayOf(
-//     PropTypes.shape({
-//       id: PropTypes.number.isRequired,
-//       title: PropTypes.string.isRequired,
-//       isComplete: PropTypes.bool.isRequired,
-//       tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
-//     })
-//   ).isRequired,
-//   onUpdateTaskCompletion: PropTypes.func.isRequired, // this part was inside the validation line for tasks; it just needed its own line!
-//   onDelete: PropTypes.func.isRequired,
-// };
+App.propTypes = {
+  tasks: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      title: PropTypes.string.isRequired,
+      isComplete: PropTypes.bool.isRequired,
+      tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
+    })
+  ).isRequired,
+  onUpdateTaskCompletion: PropTypes.func.isRequired, // this part was inside the validation line for tasks; it just needed its own line!
+  onDelete: PropTypes.func.isRequired,
+};
 
 export default App;
