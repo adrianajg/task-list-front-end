@@ -5,10 +5,10 @@ import './TaskList.css';
 
 const TaskList = (props) => {
   // We had some bad syntax here
-  const getTaskListJSX = props.tasks.map((task) => {
+  const getTaskListJSX = props.tasks.map((task, index) => {
     return (
       <Task
-        key={task.id}
+        key={index}
         id={task.id}
         title={task.title}
         isComplete={task.isComplete}

@@ -14,7 +14,7 @@ const Task = (props) => {
   };
 
   return (
-    <li className="tasks__item">
+    <li className="tasks__item" key={props.id}>
       <button
         className={`tasks__item__toggle ${buttonClass}`}
         onClick={handleUpdate}
