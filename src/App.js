@@ -25,7 +25,6 @@ const getTasks = () => {
     })
     .catch((err) => {
       console.log(err);
-      throw new Error('error fetching cats');
     });
 };
 
@@ -44,7 +43,6 @@ const markComplete = (id) => {
 const removeTask = (id) => {
   return axios.delete(`${kBaseUrl}/tasks/${id}`).catch((err) => {
     console.log(err);
-    throw new Error(`error removing task ${id}`);
   });
 };
 
@@ -52,13 +50,9 @@ const App = () => {
   const [taskData, setTaskData] = useState([]);
 
   const updateTasks = () => {
-    getTasks()
-      .then((tasks) => {
-        setTaskData(tasks);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+    getTasks().then((tasks) => {
+      setTaskData(tasks);
+    });
   };
 
   useEffect(() => {
@@ -79,7 +73,7 @@ const App = () => {
   // };
 
   const updateTask = (id) => {
-    markComplete(id) // either ternary on the button or maybe ternary here?
+    markComplete(id)
       .then((updatedTask) => {
         setTaskData((oldData) => {
           return oldData.map((task) => {
@@ -97,13 +91,11 @@ const App = () => {
   };
 
   const deleteTask = (id) => {
-    removeTask(id).then((task) => {
+    removeTask(id).then(() => {
       setTaskData((oldData) => {
         return oldData.filter((task) => {
           return task.id !== id;
         });
-      }).catch((err) => {
-        console.log(err.message);
       });
     });
   };
@@ -122,7 +114,7 @@ const App = () => {
       <main>
         <TaskList
           tasks={taskData}
-          onUpdateTaskCompletion={updateTask} // maybe have this be a ternary?
+          onUpdateTaskCompletion={updateTask}
           onDelete={deleteTask}
         />
       </main>
