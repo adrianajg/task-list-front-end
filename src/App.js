@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TaskList from './components/TaskList.js';
 import './App.css';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 const TASKS = [
   {
@@ -16,8 +17,29 @@ const TASKS = [
   },
 ];
 
+const kBaseUrl = 'https://task-list-api-c17.herokuapp.com';
+
+const taskApiToJson = (task) => {
+  const { id, title, is_complete: isComplete } = task;
+  return { id, title, isComplete };
+};
+
+const getTasks = () => {
+  return axios.get;
+};
+
 const App = () => {
   const [taskData, setTaskData] = useState(TASKS);
+
+  const updateTasks = () => {
+    getTasks().then((tasks) => {
+      setTaskData(tasks);
+    });
+  };
+
+  useEffect(() => {
+    updateTasks();
+  }, []);
 
   const updateTaskCompletion = (id) => {
     const tasks = taskData.map((task) => {
