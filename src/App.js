@@ -28,15 +28,27 @@ const getTasks = () => {
     });
 };
 
-const markComplete = (id) => {
+const toggleComplete = (id) => {
   return axios
-    .patch(`${kBaseUrl}/tasks/${id}/mark_complete`)
+    .get(`${kBaseUrl}/tasks/${id}`)
     .then((response) => {
-      return taskApiToJson(response.data);
+      if (response.data.task.is_complete) {
+        return 'mark_incomplete';
+      } else {
+        return 'mark_complete';
+      }
     })
-    .catch((err) => {
-      console.log(err);
-      throw new Error(`error while marking task ${id} complete`);
+    .then((markCompleteOrIncomplete) => {
+      return axios
+        .patch(`${kBaseUrl}/tasks/${id}/${markCompleteOrIncomplete}`)
+        .then((response) => {
+          console.log(taskApiToJson(response.data.task));
+          return taskApiToJson(response.data.task);
+        })
+        .catch((err) => {
+          console.log(err);
+          throw new Error(`error while marking task ${id} complete`);
+        });
     });
 };
 
@@ -73,8 +85,9 @@ const App = () => {
   // };
 
   const updateTask = (id) => {
-    markComplete(id)
+    toggleComplete(id)
       .then((updatedTask) => {
+        console.log(updatedTask);
         setTaskData((oldData) => {
           return oldData.map((task) => {
             if (task.id === id) {
