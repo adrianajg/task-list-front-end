@@ -17,7 +17,7 @@ const Task = (props) => {
     <li className="tasks__item">
       <button
         className={`tasks__item__toggle ${buttonClass}`}
-        onClick={handleUpdate} // Here we needed to do a helper fx in order to pass the id into the onClick action
+        onClick={handleUpdate}
       >
         {props.title}
       </button>
