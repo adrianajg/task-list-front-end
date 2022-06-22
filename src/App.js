@@ -4,32 +4,50 @@ import './App.css';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-const TASKS = [
-  {
-    id: 1,
-    title: 'Mow the lawn',
-    isComplete: false,
-  },
-  {
-    id: 2,
-    title: 'Cook Pasta',
-    isComplete: true,
-  },
-];
-
-const kBaseUrl = 'https://task-list-api-c17.herokuapp.com';
+const kBaseUrl = 'https://tambo-task-list.herokuapp.com';
 
 const taskApiToJson = (task) => {
-  const { id, title, is_complete: isComplete } = task;
-  return { id, title, isComplete };
+  const {
+    id,
+    title,
+    description,
+    goal_id: goalId,
+    is_complete: isComplete,
+  } = task;
+  return { id, title, description, goalId, isComplete };
 };
 
 const getTasks = () => {
-  return axios.get;
+  return axios
+    .get(`${kBaseUrl}/tasks`)
+    .then((response) => {
+      return response.data.map(taskApiToJson);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const markComplete = (id) => {
+  return axios
+    .patch(`${kBaseUrl}/tasks/${id}/mark_complete`)
+    .then((response) => {
+      return taskApiToJson(response.data);
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error(`error while marking task ${id} complete`);
+    });
+};
+
+const removeTask = (id) => {
+  return axios.delete(`${kBaseUrl}/tasks/${id}`).catch((err) => {
+    console.log(err);
+  });
 };
 
 const App = () => {
-  const [taskData, setTaskData] = useState(TASKS);
+  const [taskData, setTaskData] = useState([]);
 
   const updateTasks = () => {
     getTasks().then((tasks) => {
@@ -41,25 +59,52 @@ const App = () => {
     updateTasks();
   }, []);
 
-  const updateTaskCompletion = (id) => {
-    const tasks = taskData.map((task) => {
-      if (task.id === id) {
-        return { ...task, isComplete: !task.isComplete };
-      } else {
-        return task;
-      }
-    });
+  // const updateTaskCompletion = (id) => {
 
-    setTaskData(tasks);
+  //   const tasks = taskData.map((task) => {
+  //     if (task.id === id) {
+  //       return { ...task, isComplete: !task.isComplete };
+  //     } else {
+  //       return task;
+  //     }
+  //   });
+
+  //   setTaskData(tasks);
+  // };
+
+  const updateTask = (id) => {
+    markComplete(id)
+      .then((updatedTask) => {
+        setTaskData((oldData) => {
+          return oldData.map((task) => {
+            if (task.id === id) {
+              return updatedTask;
+            } else {
+              return task;
+            }
+          });
+        });
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
   const deleteTask = (id) => {
-    const newTasks = taskData.filter((task) => {
-      return task.id !== id;
+    removeTask(id).then(() => {
+      setTaskData((oldData) => {
+        return oldData.filter((task) => {
+          return task.id !== id;
+        });
+      });
     });
-
-    setTaskData(newTasks);
   };
+  // const newTasks = taskData.filter((task) => {
+  //   return task.id !== id;
+  // });
+
+  // setTaskData(newTasks);
+  // };
 
   return (
     <div className="App">
@@ -69,7 +114,7 @@ const App = () => {
       <main>
         <TaskList
           tasks={taskData}
-          onUpdateTaskCompletion={updateTaskCompletion}
+          onUpdateTaskCompletion={updateTask}
           onDelete={deleteTask}
         />
       </main>
