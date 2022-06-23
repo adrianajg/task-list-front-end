@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TaskList from './components/TaskList.js';
 import './App.css';
-import PropTypes from 'prop-types';
 import axios from 'axios';
 
 const kBaseUrl = 'https://tambo-task-list.herokuapp.com';
@@ -32,11 +31,23 @@ const markComplete = (id) => {
   return axios
     .patch(`${kBaseUrl}/tasks/${id}/mark_complete`)
     .then((response) => {
-      return taskApiToJson(response.data);
+      return taskApiToJson(response.data.task);
     })
     .catch((err) => {
       console.log(err);
       throw new Error(`error while marking task ${id} complete`);
+    });
+};
+
+const markIncomplete = (id) => {
+  return axios
+    .patch(`${kBaseUrl}/tasks/${id}/mark_incomplete`)
+    .then((response) => {
+      return taskApiToJson(response.data.task);
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error(`error while marking task ${id} incomplete`);
     });
 };
 
@@ -59,21 +70,9 @@ const App = () => {
     updateTasks();
   }, []);
 
-  // const updateTaskCompletion = (id) => {
-
-  //   const tasks = taskData.map((task) => {
-  //     if (task.id === id) {
-  //       return { ...task, isComplete: !task.isComplete };
-  //     } else {
-  //       return task;
-  //     }
-  //   });
-
-  //   setTaskData(tasks);
-  // };
-
-  const updateTask = (id) => {
-    markComplete(id)
+  const updateTask = (id, isComplete) => {
+    const toggleComplete = isComplete ? markIncomplete : markComplete;
+    toggleComplete(id)
       .then((updatedTask) => {
         setTaskData((oldData) => {
           return oldData.map((task) => {
@@ -99,12 +98,6 @@ const App = () => {
       });
     });
   };
-  // const newTasks = taskData.filter((task) => {
-  //   return task.id !== id;
-  // });
-
-  // setTaskData(newTasks);
-  // };
 
   return (
     <div className="App">
@@ -120,19 +113,6 @@ const App = () => {
       </main>
     </div>
   );
-};
-
-App.propTypes = {
-  tasks: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      title: PropTypes.string.isRequired,
-      isComplete: PropTypes.bool.isRequired,
-      tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
-    })
-  ).isRequired,
-  onUpdateTaskCompletion: PropTypes.func.isRequired, // this part was inside the validation line for tasks; it just needed its own line!
-  onDelete: PropTypes.func.isRequired,
 };
 
 export default App;

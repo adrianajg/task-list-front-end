@@ -10,7 +10,7 @@ const Task = (props) => {
   };
 
   const handleUpdate = () => {
-    props.onUpdate(props.id);
+    props.onUpdate(props.id, props.isComplete);
   };
 
   return (
