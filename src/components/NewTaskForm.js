@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const kDefaultForm = { title: '', description: '' };
 
-const NewTaskForm = () => {
+const NewTaskForm = ({ onTaskSubmitted }) => {
   const [formData, setFormData] = useState(kDefaultForm);
 
   const handleChange = (event) => {
@@ -14,8 +14,16 @@ const NewTaskForm = () => {
     setFormData(newFormData);
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    onTaskSubmitted(formData);
+
+    setFormData(kDefaultForm);
+  };
+
   return (
-    <form onSubmit={() => {}}>
+    <form onSubmit={handleSubmit}>
       <label htmlFor="title">Title</label>
       <input
         type="text"

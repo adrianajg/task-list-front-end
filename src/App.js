@@ -58,6 +58,20 @@ const removeTask = (id) => {
   });
 };
 
+const addNewTask = (taskData) => {
+  const requestBody = { ...taskData };
+
+  return axios
+    .post(`${kBaseUrl}/tasks`, requestBody)
+    .then((response) => {
+      return taskApiToJson(response.data.task);
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error('error creating new task');
+    });
+};
+
 const App = () => {
   const [taskData, setTaskData] = useState([]);
 
@@ -100,13 +114,23 @@ const App = () => {
     });
   };
 
+  const handleTaskDataSubmitted = (formData) => {
+    addNewTask(formData)
+      .then((newTask) => {
+        setTaskData((oldData) => [...oldData, newTask]);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
-        <NewTaskForm />
+        <NewTaskForm onTaskSubmitted={handleTaskDataSubmitted} />
         <TaskList
           tasks={taskData}
           onUpdateTaskCompletion={updateTask}
