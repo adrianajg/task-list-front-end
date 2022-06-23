@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TaskList from './components/TaskList.js';
 import './App.css';
 import axios from 'axios';
+import NewTaskForm from './components/NewTaskForm.js';
 
 const kBaseUrl = 'https://tambo-task-list.herokuapp.com';
 
@@ -105,6 +106,7 @@ const App = () => {
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
+        <NewTaskForm />
         <TaskList
           tasks={taskData}
           onUpdateTaskCompletion={updateTask}
