@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const kDefaultForm = { title: '', description: '' };
 
@@ -43,6 +44,10 @@ const NewTaskForm = ({ onTaskSubmitted }) => {
       <input type="submit" value="Add Task" />
     </form>
   );
+};
+
+NewTaskForm.propTypes = {
+  onTaskSubmitted: PropTypes.func.isRequired,
 };
 
 export default NewTaskForm;
