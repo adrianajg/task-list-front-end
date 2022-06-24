@@ -4,7 +4,7 @@ import './App.css';
 import axios from 'axios';
 import NewTaskForm from './components/NewTaskForm.js';
 
-const kBaseUrl = 'https://tambo-task-list.herokuapp.com';
+const kBaseUrl = 'https://adrianajg-task-list.herokuapp.com';
 
 const taskApiToJson = (task) => {
   const {
@@ -72,6 +72,11 @@ const addNewTask = (taskData) => {
     });
 };
 
+const connectTaskToGoal = (taskId, goalId) => {
+  const requestBody = { task_ids: { taskId } };
+  return axios.post(`${kBaseUrl}/goals/${goalId}/tasks`, requestBody);
+};
+
 const App = () => {
   const [taskData, setTaskData] = useState([]);
 
@@ -129,8 +134,11 @@ const App = () => {
       <header className="App-header">
         <h1>Ada&apos;s Task List</h1>
       </header>
-      <main>
-        <NewTaskForm onTaskSubmitted={handleTaskDataSubmitted} />
+      <main className="main">
+        <NewTaskForm
+          className="form"
+          onTaskSubmitted={handleTaskDataSubmitted}
+        />
         <TaskList
           tasks={taskData}
           onUpdateTaskCompletion={updateTask}
