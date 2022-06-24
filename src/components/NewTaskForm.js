@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const kDefaultForm = { title: '', description: '' };
 
-const NewTaskForm = ({ onTaskSubmitted }) => {
+const NewTaskForm = ({ goals, onTaskSubmitted }) => {
   const [formData, setFormData] = useState(kDefaultForm);
 
   const handleChange = (event) => {
@@ -23,6 +23,14 @@ const NewTaskForm = ({ onTaskSubmitted }) => {
     setFormData(kDefaultForm);
   };
 
+  const goalListJSX = goals.map((goal, index) => {
+    return (
+      <option key={index} value={goal.title}>
+        {goal.title}
+      </option>
+    );
+  });
+
   return (
     <form onSubmit={handleSubmit}>
       <label htmlFor="title">Title</label>
@@ -41,6 +49,11 @@ const NewTaskForm = ({ onTaskSubmitted }) => {
         value={formData.description}
       ></input>
 
+      <label htmlFor="goals">Add Task to Goal</label>
+      <select name="goals" id="goals">
+        {goalListJSX}
+      </select>
+
       <input type="submit" value="Add Task" />
     </form>
   );
@@ -48,6 +61,7 @@ const NewTaskForm = ({ onTaskSubmitted }) => {
 
 NewTaskForm.propTypes = {
   onTaskSubmitted: PropTypes.func.isRequired,
+  goals: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default NewTaskForm;

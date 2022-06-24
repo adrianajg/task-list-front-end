@@ -4,7 +4,7 @@ import './App.css';
 import axios from 'axios';
 import NewTaskForm from './components/NewTaskForm.js';
 
-const kBaseUrl = 'https://tambo-task-list.herokuapp.com';
+const kBaseUrl = 'https://adrianajg-task-list.herokuapp.com';
 
 const taskApiToJson = (task) => {
   const {
@@ -17,11 +17,27 @@ const taskApiToJson = (task) => {
   return { id, title, description, goalId, isComplete };
 };
 
+const goalApiToJson = (goal) => {
+  const { id, title } = goal;
+  return { id, title };
+};
+
 const getTasks = () => {
   return axios
     .get(`${kBaseUrl}/tasks`)
     .then((response) => {
       return response.data.map(taskApiToJson);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const getGoals = () => {
+  return axios
+    .get(`${kBaseUrl}/goals`)
+    .then((response) => {
+      return response.data.map(goalApiToJson);
     })
     .catch((err) => {
       console.log(err);
@@ -74,6 +90,7 @@ const addNewTask = (taskData) => {
 
 const App = () => {
   const [taskData, setTaskData] = useState([]);
+  const [goalData, setGoalData] = useState([]);
 
   const updateTasks = () => {
     getTasks().then((tasks) => {
@@ -81,8 +98,15 @@ const App = () => {
     });
   };
 
+  const updateGoals = () => {
+    getGoals().then((goals) => {
+      setGoalData(goals);
+    });
+  };
+
   useEffect(() => {
     updateTasks();
+    updateGoals();
   }, []);
 
   const updateTask = (id, isComplete) => {
@@ -130,7 +154,10 @@ const App = () => {
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
-        <NewTaskForm onTaskSubmitted={handleTaskDataSubmitted} />
+        <NewTaskForm
+          goals={goalData}
+          onTaskSubmitted={handleTaskDataSubmitted}
+        />
         <TaskList
           tasks={taskData}
           onUpdateTaskCompletion={updateTask}
