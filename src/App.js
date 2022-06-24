@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import TaskList from './components/TaskList.js';
 import './App.css';
-import PropTypes from 'prop-types';
 import axios from 'axios';
+import NewTaskForm from './components/NewTaskForm.js';
 
 const kBaseUrl = 'https://tambo-task-list.herokuapp.com';
 
@@ -32,7 +32,7 @@ const markComplete = (id) => {
   return axios
     .patch(`${kBaseUrl}/tasks/${id}/mark_complete`)
     .then((response) => {
-      return taskApiToJson(response.data);
+      return taskApiToJson(response.data.task);
     })
     .catch((err) => {
       console.log(err);
@@ -40,10 +40,36 @@ const markComplete = (id) => {
     });
 };
 
+const markIncomplete = (id) => {
+  return axios
+    .patch(`${kBaseUrl}/tasks/${id}/mark_incomplete`)
+    .then((response) => {
+      return taskApiToJson(response.data.task);
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error(`error while marking task ${id} incomplete`);
+    });
+};
+
 const removeTask = (id) => {
   return axios.delete(`${kBaseUrl}/tasks/${id}`).catch((err) => {
     console.log(err);
   });
+};
+
+const addNewTask = (taskData) => {
+  const requestBody = { ...taskData };
+
+  return axios
+    .post(`${kBaseUrl}/tasks`, requestBody)
+    .then((response) => {
+      return taskApiToJson(response.data.task);
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error('error creating new task');
+    });
 };
 
 const App = () => {
@@ -59,21 +85,9 @@ const App = () => {
     updateTasks();
   }, []);
 
-  // const updateTaskCompletion = (id) => {
-
-  //   const tasks = taskData.map((task) => {
-  //     if (task.id === id) {
-  //       return { ...task, isComplete: !task.isComplete };
-  //     } else {
-  //       return task;
-  //     }
-  //   });
-
-  //   setTaskData(tasks);
-  // };
-
-  const updateTask = (id) => {
-    markComplete(id)
+  const updateTask = (id, isComplete) => {
+    const toggleComplete = isComplete ? markIncomplete : markComplete;
+    toggleComplete(id)
       .then((updatedTask) => {
         setTaskData((oldData) => {
           return oldData.map((task) => {
@@ -99,12 +113,16 @@ const App = () => {
       });
     });
   };
-  // const newTasks = taskData.filter((task) => {
-  //   return task.id !== id;
-  // });
 
-  // setTaskData(newTasks);
-  // };
+  const handleTaskDataSubmitted = (formData) => {
+    addNewTask(formData)
+      .then((newTask) => {
+        setTaskData((oldData) => [...oldData, newTask]);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
 
   return (
     <div className="App">
@@ -112,6 +130,7 @@ const App = () => {
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
+        <NewTaskForm onTaskSubmitted={handleTaskDataSubmitted} />
         <TaskList
           tasks={taskData}
           onUpdateTaskCompletion={updateTask}
@@ -120,19 +139,6 @@ const App = () => {
       </main>
     </div>
   );
-};
-
-App.propTypes = {
-  tasks: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      title: PropTypes.string.isRequired,
-      isComplete: PropTypes.bool.isRequired,
-      tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
-    })
-  ).isRequired,
-  onUpdateTaskCompletion: PropTypes.func.isRequired, // this part was inside the validation line for tasks; it just needed its own line!
-  onDelete: PropTypes.func.isRequired,
 };
 
 export default App;
