@@ -51,6 +51,9 @@ const NewTaskForm = ({ goals, onTaskSubmitted }) => {
 
       <label htmlFor="goals">Add Task to Goal</label>
       <select name="goals" id="goals">
+        <option disabled selected value>
+          –– Add a goal? ––
+        </option>
         {goalListJSX}
       </select>
 
