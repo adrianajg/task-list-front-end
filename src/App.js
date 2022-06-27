@@ -68,6 +68,12 @@ const markIncomplete = (id) => {
     });
 };
 
+const getTaskById = (id) => {
+  return axios.get(`${kBaseUrl}/tasks/${id}`).catch((err) => {
+    console.log(err);
+  });
+};
+
 const removeTask = (id) => {
   return axios.delete(`${kBaseUrl}/tasks/${id}`).catch((err) => {
     console.log(err);
@@ -138,15 +144,87 @@ const App = () => {
     });
   };
 
-  const handleTaskDataSubmitted = (formData) => {
+  // const associateTaskWithGoal = (task, goalId) => {
+  //   const requestBody = `{"task_ids":[${task.id}]}`;
+  //   console.log('request body for associating task with goal:', requestBody);
+  //   console.log(
+  //     'this is the url making a call to:',
+  //     `${kBaseUrl}/goals/${goalId}/tasks`
+  //   );
+  //   axios
+  //     .post(`${kBaseUrl}/goals/${goalId}/tasks`, requestBody)
+  //     .then(() => {
+  //       updateTasks();
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       throw new Error('error associating task with goal');
+  //     });
+  // };
+
+  const handleTaskDataSubmitted = (formData, goalId) => {
     addNewTask(formData)
       .then((newTask) => {
         setTaskData((oldData) => [...oldData, newTask]);
+        return newTask;
+      })
+      .then((newTask) => {
+        console.log('entered call to check if goal associated');
+        console.log('the returned promise was:', newTask);
+        console.log('the goal id is:', goalId);
+        if (goalId) {
+          console.log('the goalId was found to be truthy');
+          const requestBody = `{"task_ids":[${newTask.id}]}`;
+
+          axios
+            .post(`${kBaseUrl}/goals/${goalId}/tasks`, requestBody)
+            .then((response) => {
+              console.log(
+                'response to post request to associate task with goal',
+                response
+              );
+              getTaskById(response);
+            })
+            .then((newTask) => {
+              setTaskData((oldData) => [...oldData, newTask]);
+              return newTask;
+            })
+            .catch((err) => {
+              console.log(err);
+              throw new Error('error associating task with goal');
+            });
+        }
       })
       .catch((err) => {
         console.log(err.message);
       });
   };
+
+  const associateTaskWithGoal = (goalId, taskId) => {
+    const requestBody = `{"task_ids":[${taskId}]}`;
+    console.log(`requestBody is ${requestBody}`);
+    console.log(`request URL is ${kBaseUrl}/goals/${goalId}/tasks`);
+    axios
+      .post(`${kBaseUrl}/goals/${goalId}/tasks`, requestBody)
+      .then((response) => {
+        console.log(
+          'response to post request to associate task with goal',
+          response
+        );
+        getTaskById(response);
+      })
+      .then((newTask) => {
+        setTaskData((oldData) => [...oldData, newTask]);
+        return newTask;
+      })
+      .catch((err) => {
+        console.log(err);
+        throw new Error('error associating task with goal');
+      });
+  };
+
+  console.log('Running associate task id 19 with goal id 2');
+  associateTaskWithGoal(2, 19);
 
   return (
     <div className="App">
