@@ -219,11 +219,7 @@ const App = () => {
   };
 
   const associateTaskWithGoal = (goalId, taskId) => {
-    let state = {
-      task_ids: [taskId],
-    };
-
-    const requestBody = state;
+    const requestBody = { ['task_ids']: [taskId] };
     console.log(`requestBody is ${requestBody}`);
     console.log(`request URL is ${kBaseUrl}/goals/${goalId}/tasks`);
     axios
@@ -233,9 +229,9 @@ const App = () => {
           'response to post request to associate task with goal',
           response
         );
-        return getTaskById(response);
+        // return getTaskById(response);
       })
-      .then(updateTaskGoal)
+      // .then(updateTaskGoal)
       .catch((err) => {
         console.log(err);
         throw new Error('error associating task with goal');
