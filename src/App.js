@@ -72,10 +72,10 @@ const addNewTask = (taskData) => {
     });
 };
 
-const connectTaskToGoal = (taskId, goalId) => {
-  const requestBody = { task_ids: { taskId } };
-  return axios.post(`${kBaseUrl}/goals/${goalId}/tasks`, requestBody);
-};
+// const connectTaskToGoal = (taskId, goalId) => {
+//   const requestBody = { task_ids: { taskId } };
+//   return axios.post(`${kBaseUrl}/goals/${goalId}/tasks`, requestBody);
+// };
 
 const App = () => {
   const [taskData, setTaskData] = useState([]);
